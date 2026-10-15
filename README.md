@@ -1,7 +1,9 @@
 <!-- @path[README.md] -->
 # lint-editor
 
-a pre-commit hook that checks text files against [EditorConfig](https://editorconfig.org) rules and rejects non-text files without a declaration.
+[![ci](https://github.com/D7x7z49/lint-editor/actions/workflows/ci.yml/badge.svg)](https://github.com/D7x7z49/lint-editor/actions/workflows/ci.yml)
+
+a pre-commit hook that enforces [EditorConfig](https://editorconfig.org) rules on text files and requires an explicit declaration for non-text files.
 
 ## why
 
