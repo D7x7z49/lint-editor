@@ -2,7 +2,7 @@
 
 [project]
 name = "lint-editor"
-version = "0.1.0"
+version = "0.1.1"
 description = "pre-commit hook that enforces EditorConfig rules on text files and requires an explicit declaration for non-text files"
 readme = "README.md"
 requires-python = ">=3.12"
