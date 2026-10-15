@@ -3,6 +3,20 @@
 
 a pre-commit hook that checks text files against [EditorConfig](https://editorconfig.org) rules and rejects non-text files without a declaration.
 
+## why
+
+language formatters cover their own language. the rest of the repository, such as docs, config, and data, has no shared rule. two kinds of noise slip through:
+
+- a non-text file arrives unannounced, and it may carry a secret
+- a text file drifts from the conventions, and its diff stops being readable
+
+this hook closes the gap with two contracts already in the repository:
+
+- `.editorconfig` states the text rules, so every text file is checked the same way, whatever its language
+- `.gitattributes` states which non-text files are admitted, so a binary passes only when declared
+
+the hook checks and never edits, so the gate stays apart from formatting.
+
 ## install
 
 add the hook to your `.pre-commit-config.yaml`:
