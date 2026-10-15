@@ -7,7 +7,7 @@
 
 .DEFAULT_GOAL := help
 
-.PHONY: help setup install hooks lint format typecheck test test-cov hook-test self-test all check clean
+.PHONY: help setup install hooks lint format typecheck test test-cov hook-test self-test all check release clean
 
 # Getting started
 # ---------------
@@ -55,6 +55,11 @@ self-test:  ## check this repository with its own hook
 all: lint typecheck test  ## run lint, typecheck, and tests
 
 check: hook-test  ## run the full pre-commit gate
+
+# Release
+# -------
+release:  ## bump the version, sync the readme, tag, and push
+	bash scripts/release.sh $(BUMP)
 
 # Housekeeping
 # ------------
