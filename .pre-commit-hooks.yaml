@@ -1,7 +1,7 @@
 # @path[.pre-commit-hooks.yaml]
 - id: lint-editor
   name: check files against EditorConfig
-  description: checks text files against EditorConfig rules and rejects non-text files outside the allowlist
+  description: checks text files against EditorConfig rules and rejects non-text files without a .gitattributes declaration
   entry: lint-editor
   language: python
   types: [file]

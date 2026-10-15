@@ -48,6 +48,7 @@ repos:
         args: [src/]
         files: ^src/.*\.py$|^mypy\.ini$
         pass_filenames: false
+        additional_dependencies: [editorconfig]
 
   # -- uv lock check --
   - repo: https://github.com/astral-sh/uv-pre-commit

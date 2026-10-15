@@ -7,8 +7,7 @@
 
 .DEFAULT_GOAL := help
 
-.PHONY: help setup install hooks lint format typecheck test test-cov \
-        hook-test self-test all check clean
+.PHONY: help setup install hooks lint format typecheck test test-cov hook-test self-test all check clean
 
 # Getting started
 # ---------------

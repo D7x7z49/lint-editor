@@ -69,7 +69,7 @@ max-complexity = 10
 
 [lint.per-file-ignores]
 "src/lint_editor/cli.py" = ["T20"] # the command line writes to stdout
-"tests/**/*.py" = ["S101"]         # tests rely on assert
+"tests/**" = ["INP001", "S101", "S603", "S607"] # tests skip packages, assert freely, and run tools
 
 [format]
 # keep formatting aligned with `[.editorconfig]`
