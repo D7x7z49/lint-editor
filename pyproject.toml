@@ -1,0 +1,43 @@
+# @path[pyproject.toml]
+
+[project]
+name = "lint-editor"
+version = "0.1.0"
+description = "pre-commit hook that checks files against EditorConfig conventions"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "editorconfig>=0.17.1",
+]
+authors = [
+    {name = "D7x7z49", email = "85430783+D7x7z49@users.noreply.github.com"}
+]
+license = "MIT"
+license-files = ["LICEN[CS]E*"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Software Development :: Quality Assurance",
+    "Topic :: Software Development :: Version Control :: Git",
+]
+
+[project.scripts]
+lint-editor = "lint_editor.cli:main"
+
+[dependency-groups]
+dev = [
+    "mypy>=2.4.0",
+    "pre-commit>=4.7.0",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "ruff>=0.17.0",
+]
+
+[build-system]
+requires = ["uv_build>=0.10.11,<0.11.0"]
+build-backend = "uv_build"

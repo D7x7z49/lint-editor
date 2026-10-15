@@ -1,0 +1,79 @@
+# @path[ruff.toml]
+
+target-version = "py312"
+line-length = 88
+# keep unstable rules out until they are chosen on purpose
+preview = false
+
+[lint]
+# rules are listed by family on purpose. an explicit list keeps the rule set
+# readable and stable, and avoids the hidden growth of `select = ["ALL"]`.
+select = [
+    "A",     # flake8-builtins
+    "ANN",   # flake8-annotations
+    "ARG",   # flake8-unused-arguments
+    "ASYNC", # flake8-async
+    "B",     # flake8-bugbear
+    "BLE",   # flake8-blind-except
+    "C4",    # flake8-comprehensions
+    "C90",   # mccabe
+    "DTZ",   # flake8-datetimez
+    "E",     # pycodestyle errors
+    "EM",    # flake8-errmsg
+    "ERA",   # eradicate
+    "EXE",   # flake8-executable
+    "F",     # pyflakes
+    "FA",    # flake8-future-annotations
+    "FBT",   # flake8-boolean-trap
+    "G",     # flake8-logging-format
+    "I",     # isort
+    "ICN",   # flake8-import-conventions
+    "INP",   # flake8-no-pep420
+    "ISC",   # flake8-implicit-str-concat
+    "LOG",   # flake8-logging
+    "N",     # pep8-naming
+    "PERF",  # perflint
+    "PGH",   # pygrep-hooks
+    "PIE",   # flake8-pie
+    "PL",    # pylint
+    "PT",    # flake8-pytest-style
+    "PTH",   # flake8-use-pathlib
+    "RET",   # flake8-return
+    "RSE",   # flake8-raise
+    "RUF",   # ruff-specific
+    "S",     # flake8-bandit
+    "SIM",   # flake8-simplify
+    "SLF",   # flake8-self
+    "SLOT",  # flake8-slots
+    "T10",   # flake8-debugger
+    "T20",   # flake8-print
+    "TC",    # flake8-type-checking
+    "TID",   # flake8-tidy-imports
+    "TRY",   # tryceratops
+    "W",     # pycodestyle warnings
+]
+# `UP` (pyupgrade) and `FLY` (flynt) are left out because they add newer syntax
+# sugar. `D` (pydocstyle) and `DOC` (pydoclint) are left out because this
+# project keeps docstrings out of the source.
+ignore = [
+    "E501",   # line length is owned by the formatter
+    "ISC001", # conflicts with the formatter
+]
+
+[lint.isort]
+known-first-party = ["lint_editor"]
+combine-as-imports = true
+
+[lint.mccabe]
+max-complexity = 10
+
+[lint.per-file-ignores]
+"src/lint_editor/cli.py" = ["T20"] # the command line writes to stdout
+"tests/**/*.py" = ["S101"]         # tests rely on assert
+
+[format]
+# keep formatting aligned with `[.editorconfig]`
+indent-style = "space"
+quote-style = "double"
+line-ending = "lf"
+docstring-code-format = false

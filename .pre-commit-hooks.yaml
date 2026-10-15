@@ -1,0 +1,10 @@
+# @path[.pre-commit-hooks.yaml]
+- id: lint-editor
+  name: check files against EditorConfig
+  description: checks text files against EditorConfig rules and rejects non-text files outside the allowlist
+  entry: lint-editor
+  language: python
+  types: [file]
+  pass_filenames: true
+  minimum_pre_commit_version: "3.2.0"
+  stages: [pre-commit]

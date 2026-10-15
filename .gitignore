@@ -1,0 +1,31 @@
+# Python-generated files
+__pycache__/
+*.py[oc]
+build/
+dist/
+tmp/
+wheels/
+*.egg-info/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.env
+
+# Development tools
+.coverage
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# pre-commit
+.pre-commit-config.yaml.local
+.apiscope/

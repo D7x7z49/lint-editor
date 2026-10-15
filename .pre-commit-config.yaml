@@ -1,0 +1,74 @@
+# @path[.pre-commit-config.yaml]
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+
+default_install_hook_types:
+  - pre-commit
+  - pre-push
+
+repos:
+  # -- file headers --
+  - repo: https://github.com/D7x7z49/fix-headers-hook
+    rev: v0.3.0
+    hooks:
+      - id: fix-headers
+
+  # -- basic hygiene --
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+        args: [--markdown-linebreak-ext=md]
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-added-large-files
+        args: ["--maxkb=1024"]
+      - id: check-case-conflict
+      - id: detect-private-key
+      - id: debug-statements
+
+  # -- ruff (lint + format) --
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.17.0
+    hooks:
+      - id: ruff-check
+        args: [--fix]
+        types_or: [python, pyi]
+      - id: ruff-format
+        types_or: [python, pyi]
+
+  # -- mypy (strict types) --
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v2.4.0
+    hooks:
+      - id: mypy
+        args: [src/]
+        files: ^src/.*\.py$|^mypy\.ini$
+        pass_filenames: false
+
+  # -- uv lock check --
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.11.2
+    hooks:
+      - id: uv-lock
+
+  # -- local checks --
+  - repo: local
+    hooks:
+      - id: lint-editor
+        name: check files against EditorConfig
+        entry: uv run lint-editor
+        language: unsupported
+        types: [file]
+        stages: [pre-commit]
+
+      - id: pytest
+        name: run the tests
+        entry: uv run pytest
+        language: unsupported
+        stages: [pre-push, manual]
+        always_run: true
+        pass_filenames: false
