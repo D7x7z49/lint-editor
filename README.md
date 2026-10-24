@@ -27,7 +27,7 @@ add the hooks to your `.pre-commit-config.yaml`:
 ```yaml
 repos:
   - repo: https://github.com/D7x7z49/lint-editor
-    rev: v0.2.0
+    rev: v0.3.0
 
     hooks:
       - id: lint-editor
