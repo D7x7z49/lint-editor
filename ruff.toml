@@ -4,6 +4,8 @@ target-version = "py312"
 line-length = 88
 # keep unstable rules out until they are chosen on purpose
 preview = false
+# e2e project trees are sample inputs, not code this project owns
+exclude = ["tests/data/e2e/**/project"]
 
 [lint]
 # rules are listed by family on purpose. an explicit list keeps the rule set
@@ -69,6 +71,7 @@ max-complexity = 10
 
 [lint.per-file-ignores]
 "src/lint_editor/cli.py" = ["T20"] # the command line writes to stdout
+"src/lint_commit/cli.py" = ["T20", "S603", "S607"] # the command line writes to stderr and runs git
 "tests/**" = ["INP001", "S101", "S603", "S607"] # tests skip packages, assert freely, and run tools
 
 [format]

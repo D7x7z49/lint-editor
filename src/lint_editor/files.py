@@ -1,15 +1,29 @@
-# @path[src/lint_editor/attributes.py]
+# @path[src/lint_editor/files.py]
+# ==============================================================================
+# classify a path as text or non-text and read its git attributes
 
 import os
 import subprocess
 from collections.abc import Sequence
 from pathlib import Path
 
-from .errors import ProgramError
+from .constants import ATTRIBUTE_COMMAND, BINARY_SNIFF_BYTES, NON_TEXT_VALUES, msg
+from .schema import ProgramError
 
-# ask git to resolve the two attributes that mark a path as non-text
-ATTRIBUTE_COMMAND = ("git", "check-attr", "--stdin", "-z", "binary", "text")
-NON_TEXT_VALUES = {b"binary": b"set", b"text": b"unset"}
+# ==============================================================================
+# CLASSIFY
+# ==============================================================================
+
+
+def is_binary(path: Path) -> bool:
+    # git treats a NUL byte in the first 8000 bytes as binary
+    with path.open("rb") as handle:
+        return b"\0" in handle.read(BINARY_SNIFF_BYTES)
+
+
+# ==============================================================================
+# ATTRIBUTES
+# ==============================================================================
 
 
 def declared_non_text(paths: Sequence[Path]) -> set[Path]:
@@ -26,12 +40,10 @@ def declared_non_text(paths: Sequence[Path]) -> set[Path]:
             check=False,
         )
     except OSError as error:
-        message = f"cannot run git: {error}"
-        raise ProgramError(message) from error
+        raise ProgramError(msg("git.run.failed", reason=error)) from error
 
     if result.returncode != 0:
-        message = f"git check-attr failed with exit code {result.returncode}"
-        raise ProgramError(message)
+        raise ProgramError(msg("git.attributes.failed", code=result.returncode))
 
     return _parse_declared(result.stdout)
 

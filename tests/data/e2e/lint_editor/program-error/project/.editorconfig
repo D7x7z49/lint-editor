@@ -1,0 +1,4 @@
+root = true
+
+[*]
+this line has no equals

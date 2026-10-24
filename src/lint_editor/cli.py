@@ -1,25 +1,27 @@
 # @path[src/lint_editor/cli.py]
+# ==============================================================================
+# run the check and print one line per finding
 
 import sys
 
-from .constants import PROGRAM
+from .constants import PROGRAM, STATUS_ERROR, STATUS_FINDINGS, STATUS_OK
 from .core import check_paths
-from .errors import ProgramError
+from .schema import ProgramError
 
-STATUS_OK = 0
-STATUS_FINDINGS = 1
-STATUS_ERROR = 2
+# ==============================================================================
+# COMMAND
+# ==============================================================================
 
 
 def main() -> int:
     try:
         findings = check_paths(sys.argv[1:])
     except ProgramError as error:
-        print(f"{PROGRAM}: {error}", file=sys.stderr)
+        print(f"[{PROGRAM}] {error}", file=sys.stderr)
         return STATUS_ERROR
 
     for finding in findings:
-        print(f"{finding.path}: {finding.message}", file=sys.stderr)
+        print(f"[{PROGRAM}] [{finding.path}] {finding.message}", file=sys.stderr)
 
     return STATUS_FINDINGS if findings else STATUS_OK
 

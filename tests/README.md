@@ -9,8 +9,28 @@ PURPOSE
 - rely on monitoring and fast rollback for untested areas
 
 SCOPES
-- choose a test type by scope before writing it
-- name the file after the scope, as `*.unit.test.py`, `*.component.test.py`, `*.integration.test.py`, or `*.e2e.test.py`
+- mirror the `src` package tree under `tests/<package>/`
+- name each file after the module and the scope, as `*.unit.test.py`
+- keep `data/` on the same package and subject path
+- keep `e2e/` as a separate tree for test modules
+- keep e2e cases under `tests/data/e2e/<package>/<case>/project/`
+- keep e2e test modules under `tests/e2e/<package>/`
+
+DATA
+- pair input and expected output in one case directory
+- use `stdin.txt` for a single input file
+- use `project/` for an e2e input tree
+- keep e2e input trees under `tests/data/e2e/`
+- store `stdout.txt` and `stderr.txt` only when the case checks them
+- keep exit codes in the test code
+- keep data paths in `conftest.py`, not in test modules
+- let fixtures return a `Path` to the prepared input
+
+CONFTEST
+- keep shared fixtures in `tests/conftest.py`
+- keep package data fixtures in `tests/<package>/conftest.py`
+- keep e2e case preparation in `tests/e2e/conftest.py`
+- let tests request named fixtures instead of composing data paths
 
 UNIT TESTS
 - file pattern: `*.unit.test.py`

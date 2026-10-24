@@ -1,5 +1,6 @@
 # @path[src/lint_editor/__init__.py]
 
-from .core import Finding, check_paths
+from .core import check_paths
+from .schema import Finding
 
 __all__ = ["Finding", "check_paths"]

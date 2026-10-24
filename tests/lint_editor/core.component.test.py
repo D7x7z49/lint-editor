@@ -1,4 +1,4 @@
-# @path[tests/core.component.test.py]
+# @path[tests/lint_editor/core.component.test.py]
 
 from pathlib import Path
 

@@ -1,18 +1,15 @@
-# @path[tests/editorconfig.integration.test.py]
+# @path[tests/lint_editor/editorconfig.integration.test.py]
 
-from collections.abc import Callable
 from pathlib import Path
 
 import pytest
 
 from lint_editor.editorconfig import check_text
-from lint_editor.errors import ProgramError
+from lint_editor.schema import ProgramError
 
 
-def test_check_text_reports_a_violation(
-    tmp_path: Path, copy_data: Callable[[str, str], Path]
-) -> None:
-    copy_data("editorconfig/base", ".editorconfig")
+@pytest.mark.usefixtures("base_config")
+def test_check_text_reports_a_violation(tmp_path: Path) -> None:
     good = tmp_path / "good.txt"
     good.write_bytes(b"ok\n")
     bad = tmp_path / "bad.txt"
@@ -22,11 +19,8 @@ def test_check_text_reports_a_violation(
     assert check_text(bad) == ["file does not end with a newline"]
 
 
-def test_a_nearer_editorconfig_wins(
-    tmp_path: Path, copy_data: Callable[[str, str], Path]
-) -> None:
-    copy_data("editorconfig/base", ".editorconfig")
-    copy_data("editorconfig/inner", "sub/.editorconfig")
+@pytest.mark.usefixtures("base_config", "inner_config")
+def test_a_nearer_editorconfig_wins(tmp_path: Path) -> None:
     path = tmp_path / "sub" / "a.txt"
     path.write_bytes(b"oops")
 
@@ -34,10 +28,8 @@ def test_a_nearer_editorconfig_wins(
     assert check_text(path) == []
 
 
-def test_check_text_reports_a_broken_editorconfig(
-    tmp_path: Path, copy_data: Callable[[str, str], Path]
-) -> None:
-    copy_data("editorconfig/broken", ".editorconfig")
+@pytest.mark.usefixtures("broken_config")
+def test_check_text_reports_a_broken_editorconfig(tmp_path: Path) -> None:
     path = tmp_path / "a.txt"
     path.write_bytes(b"ok\n")
 

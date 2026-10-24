@@ -1,0 +1,8 @@
+[types]
+feat = "a feature"
+fix = "a bug fix"
+docs = "documentation"
+
+[rules]
+"src/**" = ["feat", "fix"]
+"docs/**" = ["docs"]

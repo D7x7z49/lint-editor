@@ -1,8 +1,8 @@
-# @path[tests/core.unit.test.py]
+# @path[tests/lint_editor/files.unit.test.py]
 
 from pathlib import Path
 
-from lint_editor.core import is_binary
+from lint_editor.files import is_binary
 
 
 def test_empty_file_is_text(tmp_path: Path) -> None:

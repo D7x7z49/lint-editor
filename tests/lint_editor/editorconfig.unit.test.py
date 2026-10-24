@@ -1,4 +1,4 @@
-# @path[tests/editorconfig.unit.test.py]
+# @path[tests/lint_editor/editorconfig.unit.test.py]
 
 from lint_editor.editorconfig import validate_property
 

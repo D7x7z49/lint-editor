@@ -1,10 +1,9 @@
-# @path[tests/cli.component.test.py]
+# @path[tests/lint_editor/cli.component.test.py]
 
 import pytest
 
 from lint_editor import cli
-from lint_editor.core import Finding
-from lint_editor.errors import ProgramError
+from lint_editor.schema import Finding, ProgramError
 
 # the exit codes pre-commit and shells depend on
 EXIT_OK = 0

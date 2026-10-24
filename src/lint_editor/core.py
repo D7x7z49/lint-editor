@@ -1,24 +1,18 @@
 # @path[src/lint_editor/core.py]
+# ==============================================================================
+# check every supplied path and collect one finding per violation
 
 from collections.abc import Sequence
 from pathlib import Path
-from typing import NamedTuple
 
-from .attributes import declared_non_text
-from .constants import BINARY_SNIFF_BYTES, MESSAGE_NOT_DECLARED
+from .constants import msg
 from .editorconfig import check_text
-from .errors import ProgramError
+from .files import declared_non_text, is_binary
+from .schema import Finding, ProgramError
 
-
-class Finding(NamedTuple):
-    path: str
-    message: str
-
-
-def is_binary(path: Path) -> bool:
-    # git treats a NUL byte in the first 8000 bytes as binary
-    with path.open("rb") as handle:
-        return b"\0" in handle.read(BINARY_SNIFF_BYTES)
+# ==============================================================================
+# PIPELINE
+# ==============================================================================
 
 
 def check_paths(paths: Sequence[str]) -> list[Finding]:
@@ -33,8 +27,7 @@ def check_paths(paths: Sequence[str]) -> list[Finding]:
         try:
             binary = is_binary(path)
         except OSError as error:
-            message = f"{raw}: {error}"
-            raise ProgramError(message) from error
+            raise ProgramError(msg("path.failed", path=raw, reason=error)) from error
         if binary:
             non_text_paths.append(path)
         else:
@@ -42,7 +35,7 @@ def check_paths(paths: Sequence[str]) -> list[Finding]:
 
     declared = declared_non_text(non_text_paths)
     findings: list[Finding] = [
-        Finding(str(path), MESSAGE_NOT_DECLARED)
+        Finding(str(path), msg("check.not_declared"))
         for path in non_text_paths
         if path not in declared
     ]
@@ -51,8 +44,7 @@ def check_paths(paths: Sequence[str]) -> list[Finding]:
         try:
             messages = check_text(path)
         except OSError as error:
-            message = f"{path}: {error}"
-            raise ProgramError(message) from error
+            raise ProgramError(msg("path.failed", path=path, reason=error)) from error
         findings.extend(Finding(str(path), message) for message in messages)
 
     return findings

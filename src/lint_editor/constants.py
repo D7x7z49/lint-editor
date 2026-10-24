@@ -1,20 +1,62 @@
 # @path[src/lint_editor/constants.py]
+# ==============================================================================
+# fixed values and every message the tool can print
+
+# ==============================================================================
+# NAMES
+# ==============================================================================
 
 PROGRAM = "lint-editor"
+
+# ==============================================================================
+# LIMITS
+# ==============================================================================
 
 # git reads at most this many bytes to decide whether a file is binary
 BINARY_SNIFF_BYTES = 8000
 
-# editorconfig values this hook can verify
+# ==============================================================================
+# EDITORCONFIG VALUES
+# ==============================================================================
+
 INDENT_STYLES = {"space", "tab"}
 BOOLEAN_TRUE = "true"
 
-# messages, printed as "{path}: {message}"
-MESSAGE_NO_RULES = "no .editorconfig rule matches this file"
-MESSAGE_NOT_DECLARED = "non-text file without a .gitattributes declaration"
-MESSAGE_CHARSET = "content does not match charset {value}"
-MESSAGE_END_OF_LINE = "line ending does not match {value}"
-MESSAGE_FINAL_NEWLINE = "file does not end with a newline"
-MESSAGE_TRAILING_WHITESPACE = "line {line} has trailing whitespace"
-MESSAGE_INDENT_STYLE = "line {line} does not use {value} indentation"
-MESSAGE_LINE_LENGTH = "line {line} exceeds max_line_length {value}"
+# ==============================================================================
+# GIT ATTRIBUTES
+# ==============================================================================
+
+# ask git to resolve the two attributes that mark a path as non-text
+ATTRIBUTE_COMMAND = ("git", "check-attr", "--stdin", "-z", "binary", "text")
+NON_TEXT_VALUES = {b"binary": b"set", b"text": b"unset"}
+
+# ==============================================================================
+# EXIT CODES
+# ==============================================================================
+
+STATUS_OK = 0
+STATUS_FINDINGS = 1
+STATUS_ERROR = 2
+
+# ==============================================================================
+# MESSAGES
+# ==============================================================================
+
+# keys read as scope.object.trait, values hold square bracketed variables
+MESSAGES: dict[str, str] = {
+    "check.no_rules": "no .editorconfig rule matches this file",
+    "check.not_declared": "non-text file without a .gitattributes declaration",
+    "check.charset": "content does not match charset [{value}]",
+    "check.end_of_line": "line ending does not match [{value}]",
+    "check.final_newline": "file does not end with a newline",
+    "check.trailing_whitespace": "line [{line}] has trailing whitespace",
+    "check.indent_style": "line [{line}] does not use [{value}] indentation",
+    "check.line_length": "line [{line}] exceeds max_line_length [{value}]",
+    "git.run.failed": "cannot run git ({reason})",
+    "git.attributes.failed": "git check-attr failed with exit code [{code}]",
+    "path.failed": "[{path}] {reason}",
+}
+
+
+def msg(key: str, **values: object) -> str:
+    return MESSAGES[key].format(**values)

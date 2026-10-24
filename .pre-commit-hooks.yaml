@@ -8,3 +8,12 @@
   pass_filenames: true
   minimum_pre_commit_version: "3.2.0"
   stages: [pre-commit]
+
+- id: lint-commit
+  name: check the commit message against path rules
+  description: derives the allowed commit types from the staged paths and checks the message
+  entry: lint-commit
+  language: python
+  pass_filenames: true
+  minimum_pre_commit_version: "3.2.0"
+  stages: [commit-msg]

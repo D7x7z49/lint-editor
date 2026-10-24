@@ -6,6 +6,9 @@ default_install_hook_types:
   - pre-commit
   - pre-push
 
+# test data holds sample inputs, some are intentionally malformed
+exclude: ^tests/data/
+
 repos:
   # -- file headers --
   - repo: https://github.com/D7x7z49/fix-headers-hook

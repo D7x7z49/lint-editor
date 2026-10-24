@@ -1,0 +1,9 @@
+# @path[tests/data/e2e/lint_commit/split/project/commit-config.toml]
+[types]
+feat = "a feature"
+fix = "a bug fix"
+docs = "documentation"
+
+[rules]
+"src/**" = ["feat", "fix"]
+"docs/**" = ["docs"]

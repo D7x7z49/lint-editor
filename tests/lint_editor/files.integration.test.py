@@ -1,19 +1,17 @@
-# @path[tests/attributes.integration.test.py]
+# @path[tests/lint_editor/files.integration.test.py]
 
-from collections.abc import Callable
 from pathlib import Path
 
 import pytest
 
-from lint_editor.attributes import declared_non_text
+from lint_editor.files import declared_non_text
 
 
+@pytest.mark.usefixtures("mixed_attributes")
 def test_declared_non_text_reads_gitattributes(
     git_repo: Path,
     monkeypatch: pytest.MonkeyPatch,
-    copy_data: Callable[[str, str], Path],
 ) -> None:
-    copy_data("gitattributes/mixed", ".gitattributes")
     (git_repo / "a.png").write_bytes(b"\0")
     (git_repo / "b.txt").write_bytes(b"\0")
     (git_repo / "c.dat").write_bytes(b"\0")

@@ -9,6 +9,7 @@ requires-python = ">=3.12"
 keywords = ["pre-commit", "editorconfig", "lint", "formatting", "git", "code-quality"]
 dependencies = [
     "editorconfig>=0.17.1",
+    "pathspec>=1.1.1",
 ]
 authors = [
     {name = "D7x7z49", email = "85430783+D7x7z49@users.noreply.github.com"}
@@ -30,6 +31,7 @@ classifiers = [
 
 [project.scripts]
 lint-editor = "lint_editor.cli:main"
+lint-commit = "lint_commit.cli:main"
 
 [project.urls]
 homepage = "https://github.com/D7x7z49/lint-editor"
@@ -47,3 +49,7 @@ dev = [
 [build-system]
 requires = ["uv_build>=0.10.11,<0.11.0"]
 build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = ["lint_editor", "lint_commit"]
+module-root = "src"

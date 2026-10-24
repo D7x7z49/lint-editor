@@ -1,0 +1,8 @@
+[types]
+feat = "a feature"
+fix = "a bug fix"
+chore = "maintenance"
+
+[rules]
+"**" = ["chore"]
+"src/**" = ["feat", "fix"]
