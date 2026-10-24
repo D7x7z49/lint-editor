@@ -49,6 +49,7 @@ the only python dependencies are [editorconfig](https://pypi.org/project/editorc
 
 pre-commit passes the staged paths to the hook. for each path:
 
+- an ignored path is skipped
 - a text file is checked against its `.editorconfig` properties
 - a non-text file passes only when `.gitattributes` declares it non-text
 
@@ -70,6 +71,23 @@ docs/report.pdf -text
 ```
 
 nested `.gitattributes` files and git precedence apply as usual, because the hook resolves attributes with `git check-attr`.
+
+#### the ignore list is `.lint-editor-ignore`
+
+some files hold intentionally malformed input, such as test data.
+list them in `.lint-editor-ignore`, either at the repository root or in `config/`:
+
+```gitignore
+# test data holds intentionally malformed inputs
+tests/data/
+```
+
+- one gitignore style pattern per line
+- `#` starts a comment, blank lines are ignored
+- a match skips the file before any check
+- both locations are read when present, and every pattern is relative to the repository root
+- a missing file excludes nothing
+- `--ignore-file PATH` replaces the auto discovery and may be repeated
 
 ### checks
 

@@ -7,7 +7,13 @@ from pathlib import Path
 
 from .constants import msg
 from .editorconfig import check_text
-from .files import declared_non_text, is_binary
+from .files import (
+    declared_non_text,
+    find_ignore_files,
+    is_binary,
+    is_ignored,
+    load_ignore,
+)
 from .schema import Finding, ProgramError
 
 # ==============================================================================
@@ -15,14 +21,26 @@ from .schema import Finding, ProgramError
 # ==============================================================================
 
 
-def check_paths(paths: Sequence[str]) -> list[Finding]:
+def check_paths(
+    paths: Sequence[str],
+    ignore_files: Sequence[str] | None = None,
+) -> list[Finding]:
     # split the inputs by kind, then apply the policy for each kind
+    root = Path.cwd()
+    candidates = (
+        tuple(Path(item) for item in ignore_files)
+        if ignore_files is not None
+        else find_ignore_files(root)
+    )
+    ignore = load_ignore(candidates)
     text_paths: list[Path] = []
     non_text_paths: list[Path] = []
 
     for raw in paths:
         path = Path(raw)
         if not path.is_file():
+            continue
+        if is_ignored(ignore, root, path):
             continue
         try:
             binary = is_binary(path)

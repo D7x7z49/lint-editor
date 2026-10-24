@@ -31,6 +31,13 @@ ATTRIBUTE_COMMAND = ("git", "check-attr", "--stdin", "-z", "binary", "text")
 NON_TEXT_VALUES = {b"binary": b"set", b"text": b"unset"}
 
 # ==============================================================================
+# IGNORE FILES
+# ==============================================================================
+
+IGNORE_FILE = ".lint-editor-ignore"
+IGNORE_DIRS = ("", "config")
+
+# ==============================================================================
 # EXIT CODES
 # ==============================================================================
 
@@ -44,6 +51,9 @@ STATUS_ERROR = 2
 
 # keys read as scope.object.trait, values hold square bracketed variables
 MESSAGES: dict[str, str] = {
+    "cli.parser.description": "check files against their editorconfig properties",
+    "cli.ignore.help": "ignore file, repeatable, replaces auto discovery",
+    "cli.paths.help": "paths to check",
     "check.no_rules": "no .editorconfig rule matches this file",
     "check.not_declared": "non-text file without a .gitattributes declaration",
     "check.charset": "content does not match charset [{value}]",
@@ -54,6 +64,7 @@ MESSAGES: dict[str, str] = {
     "check.line_length": "line [{line}] exceeds max_line_length [{value}]",
     "git.run.failed": "cannot run git ({reason})",
     "git.attributes.failed": "git check-attr failed with exit code [{code}]",
+    "ignore.negated": "[{path}] line [{line}] uses a negated pattern, which is not supported",
     "path.failed": "[{path}] {reason}",
 }
 
