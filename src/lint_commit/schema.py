@@ -43,7 +43,7 @@ class Reason(StrEnum):
 # ==============================================================================
 
 # one identifier definition, shared by the header scope and the path scope
-IDENTIFIER_PATTERN = r"[A-Za-z][A-Za-z0-9-]*"
+IDENTIFIER_PATTERN = r"[A-Za-z0-9._-]+"
 IDENTIFIER = re.compile(IDENTIFIER_PATTERN)
 
 HEADER = re.compile(

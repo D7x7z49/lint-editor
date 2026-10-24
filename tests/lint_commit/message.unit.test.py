@@ -41,9 +41,9 @@ def test_missing_space_after_colon_is_rejected() -> None:
         parse_message("feat:something\n")
 
 
-def test_scope_with_underscore_is_rejected() -> None:
-    with pytest.raises(MessageError, match="header"):
-        parse_message("feat(api_v2): something\n")
+def test_scope_with_underscore_is_accepted() -> None:
+    message = parse_message("feat(api_v2): something\n")
+    assert message.head.scope == "api_v2"
 
 
 def test_empty_message_is_rejected() -> None:
