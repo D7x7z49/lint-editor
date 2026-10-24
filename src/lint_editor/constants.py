@@ -34,7 +34,7 @@ NON_TEXT_VALUES = {b"binary": b"set", b"text": b"unset"}
 # IGNORE FILES
 # ==============================================================================
 
-IGNORE_FILE = ".lint-editor-ignore"
+IGNORE_FILE = "lint-editor.ignore"
 IGNORE_DIRS = ("", "config")
 
 # ==============================================================================

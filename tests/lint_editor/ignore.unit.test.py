@@ -9,7 +9,7 @@ from lint_editor.schema import ProgramError
 
 
 def write(root: Path, text: str) -> Path:
-    path = root / ".lint-editor-ignore"
+    path = root / "lint-editor.ignore"
     path.write_text(text, encoding="utf-8")
     return path
 
@@ -17,7 +17,7 @@ def write(root: Path, text: str) -> Path:
 def write_config(root: Path, text: str) -> Path:
     directory = root / "config"
     directory.mkdir()
-    path = directory / ".lint-editor-ignore"
+    path = directory / "lint-editor.ignore"
     path.write_text(text, encoding="utf-8")
     return path
 
