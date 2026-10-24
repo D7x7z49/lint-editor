@@ -16,7 +16,7 @@ language formatters cover their own language. the rest of the repository has no 
 two hooks close the gap with contracts already in the repository:
 
 - `lint-editor` reads `.editorconfig` for text rules and `.gitattributes` for non-text admission
-- `lint-commit` reads `commit-config.toml` for path rules and checks the message against them
+- `lint-commit` reads `lint-commit.toml` for path rules and checks the message against them
 
 both hooks check and never edit, so the gate stays apart from formatting.
 
@@ -72,10 +72,10 @@ docs/report.pdf -text
 
 nested `.gitattributes` files and git precedence apply as usual, because the hook resolves attributes with `git check-attr`.
 
-#### the ignore list is `.lint-editor-ignore`
+#### the ignore list is `lint-editor.ignore`
 
 some files hold intentionally malformed input, such as test data.
-list them in `.lint-editor-ignore`, either at the repository root or in `config/`:
+list them in `lint-editor.ignore`, either at the repository root or in `config/`:
 
 ```gitignore
 # test data holds intentionally malformed inputs
@@ -133,14 +133,14 @@ a path with no matching rule fails, so every area must be declared.
 
 ### configuration
 
-place `commit-config.toml` at the repository root:
+place `lint-commit.toml` at the repository root or under `config/`:
 
 ```toml
 [types]
-feat = "a new feature"
-fix = "a bug fix"
+feat = "new feature"
+fix = "bug fix"
 docs = "documentation only"
-chore = "maintenance"
+chore = "maintenance work"
 
 [rules]
 "**" = ["chore"]
@@ -198,11 +198,12 @@ a config entry with the same name as a built in mark replaces it.
 run the tool on a message file:
 
 ```bash
-lint-commit --config commit-config.toml .git/COMMIT_EDITMSG
+lint-commit .git/COMMIT_EDITMSG
 ```
 
 without a message file it reads `.git/COMMIT_EDITMSG`.
-`--config` defaults to `commit-config.toml` at the repository root.
+without `--config` the hook looks for `lint-commit.toml` at the root or under `config/`.
+`--config PATH` replaces the auto discovery.
 
 exit codes:
 
