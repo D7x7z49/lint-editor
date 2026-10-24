@@ -9,7 +9,7 @@
 
 MESSAGE ?= tmp/commit.tmp
 
-.PHONY: help setup install hooks lint format format-check typecheck test test-cov hook-test self-test all check release clean
+.PHONY: help setup install dev hooks lint format format-check typecheck test test-cov hook-test self-test all check release clean
 
 # Getting started
 # ---------------
@@ -19,8 +19,12 @@ help:  ## show this help
 
 setup: install hooks  ## install dependencies and git hooks
 
-install:  ## install runtime and dev dependencies with uv
+install:  ## install dependencies for CI and first setup
 	uv sync --locked
+
+dev:  ## install dependencies and development hooks
+	uv sync
+	uv run pre-commit install --install-hooks
 
 hooks:  ## install the pre-commit and pre-push hooks
 	uv run pre-commit install --install-hooks
