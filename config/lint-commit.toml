@@ -1,0 +1,48 @@
+# @path[config/lint-commit.toml]
+# commit types accepted by this repository
+[types]
+feat = "new user visible feature"
+fix = "bug fix"
+docs = "documentation only"
+test = "test only change"
+refactor = "behavior preserving change"
+perf = "performance improvement"
+build = "build or packaging change"
+ci = "continuous integration change"
+chore = "maintenance work"
+style = "formatting only"
+revert = "revert earlier commit"
+
+# path to allowed types, last match wins
+[rules]
+# fallback for paths not listed below
+"**" = ["chore"]
+
+# source and tests
+"src/**" = ["feat", "fix", "refactor", "perf", "test"]
+"tests/**" = ["test", "feat", "fix", "refactor"]
+
+# tooling and automation
+"scripts/**" = ["build", "ci", "chore"]
+".github/**" = ["ci", "chore"]
+"config/**" = ["chore", "build"]
+
+# documentation
+"docs/**" = ["docs"]
+"*.md" = ["docs"]
+"AGENTS.md" = ["docs", "chore"]
+
+# root configuration
+"pyproject.toml" = ["build", "chore"]
+"uv.lock" = ["build", "chore"]
+"Makefile" = ["build", "chore"]
+"ruff.toml" = ["chore", "style"]
+"mypy.ini" = ["chore"]
+"pytest.ini" = ["test", "chore"]
+".editorconfig" = ["chore", "style"]
+".gitattributes" = ["chore"]
+".gitignore" = ["chore"]
+".pre-commit-config.yaml" = ["ci", "chore"]
+".pre-commit-hooks.yaml" = ["build", "chore"]
+".python-version" = ["build", "chore"]
+"LICENSE" = ["docs", "chore"]
