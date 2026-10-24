@@ -34,10 +34,10 @@ jobs:
         run: uv run pre-commit run --all-files
 
       - name: validate the hook manifest
-        run: uv run pre-commit try-repo . lint-editor --all-files
+        run: uv run pre-commit validate-manifest .pre-commit-hooks.yaml
 
-      - name: validate the commit hook entry
-        run: uv run lint-commit --help
+      - name: validate the editor hook
+        run: uv run pre-commit try-repo . lint-editor --all-files
 
   test:
     runs-on: ubuntu-latest
