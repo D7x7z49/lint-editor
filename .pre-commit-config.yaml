@@ -76,6 +76,13 @@ repos:
         language: unsupported
         stages: [commit-msg]
 
+      - id: lint-path
+        name: check paths against .pathbase contracts
+        entry: uv run lint-path
+        language: unsupported
+        types: [file]
+        stages: [pre-commit]
+
       - id: pytest
         name: run the tests
         entry: uv run pytest
