@@ -5,6 +5,7 @@
 default_install_hook_types:
   - pre-commit
   - pre-push
+  - commit-msg
 
 # test data holds sample inputs, some are intentionally malformed
 exclude: ^tests/data/
@@ -68,6 +69,12 @@ repos:
         language: unsupported
         types: [file]
         stages: [pre-commit]
+
+      - id: lint-commit
+        name: check the commit message against path rules
+        entry: uv run lint-commit
+        language: unsupported
+        stages: [commit-msg]
 
       - id: pytest
         name: run the tests
