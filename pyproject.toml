@@ -2,11 +2,11 @@
 
 [project]
 name = "lint-editor"
-version = "0.1.1"
-description = "pre-commit hook that enforces EditorConfig rules on text files and requires an explicit declaration for non-text files"
+version = "0.2.0"
+description = "pre-commit hooks that enforce EditorConfig text rules, explicit non-text declarations, and conventional commit messages"
 readme = "README.md"
 requires-python = ">=3.12"
-keywords = ["pre-commit", "editorconfig", "lint", "formatting", "git", "code-quality"]
+keywords = ["pre-commit", "editorconfig", "conventional-commits", "commit-message", "lint", "formatting", "git", "code-quality"]
 dependencies = [
     "editorconfig>=0.17.1",
     "pathspec>=1.1.1",

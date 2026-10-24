@@ -36,6 +36,9 @@ jobs:
       - name: validate the hook manifest
         run: uv run pre-commit try-repo . lint-editor --all-files
 
+      - name: validate the commit hook entry
+        run: uv run lint-commit --help
+
   test:
     runs-on: ubuntu-latest
     strategy:

@@ -3,41 +3,49 @@
 
 [![ci](https://github.com/D7x7z49/lint-editor/actions/workflows/ci.yml/badge.svg)](https://github.com/D7x7z49/lint-editor/actions/workflows/ci.yml)
 
-a pre-commit hook that enforces [EditorConfig](https://editorconfig.org) rules on text files and requires an explicit declaration for non-text files.
+pre-commit hooks that enforce EditorConfig text rules, explicit non-text declarations, and conventional commit messages.
 
 ## why
 
-language formatters cover their own language. the rest of the repository, such as docs, config, and data, has no shared rule. two kinds of noise slip through:
+language formatters cover their own language. the rest of the repository has no shared rule, so three kinds of noise slip through:
 
 - a non-text file arrives unannounced, and it may carry a secret
 - a text file drifts from the conventions, and its diff stops being readable
+- a commit type is a claim, and nothing checks it against the change
 
-this hook closes the gap with two contracts already in the repository:
+two hooks close the gap with contracts already in the repository:
 
-- `.editorconfig` states the text rules, so every text file is checked the same way, whatever its language
-- `.gitattributes` states which non-text files are admitted, so a binary passes only when declared
+- `lint-editor` reads `.editorconfig` for text rules and `.gitattributes` for non-text admission
+- `lint-commit` reads `commit-config.toml` for path rules and checks the message against them
 
-the hook checks and never edits, so the gate stays apart from formatting.
+both hooks check and never edit, so the gate stays apart from formatting.
 
 ## install
 
-add the hook to your `.pre-commit-config.yaml`:
+add the hooks to your `.pre-commit-config.yaml`:
 
 ```yaml
 repos:
   - repo: https://github.com/D7x7z49/lint-editor
-    rev: v0.1.1
+    rev: v0.2.0
 
     hooks:
       - id: lint-editor
+      - id: lint-commit
 ```
 
-then run `pre-commit install`.
+then install both stages:
 
-the hook needs the `git` command, which pre-commit already needs.
-its only python dependency is the [editorconfig](https://pypi.org/project/editorconfig) core library.
+```bash
+pre-commit install --hook-type pre-commit --hook-type commit-msg
+```
 
-## how it works
+the hooks need the `git` command, which pre-commit already needs.
+the only python dependencies are [editorconfig](https://pypi.org/project/editorconfig) and [pathspec](https://pypi.org/project/pathspec).
+
+## lint-editor
+
+### how it works
 
 pre-commit passes the staged paths to the hook. for each path:
 
@@ -47,12 +55,12 @@ pre-commit passes the staged paths to the hook. for each path:
 a non-text file without a declaration fails, so the allowlist stays explicit.
 a text file with no matching `.editorconfig` rule fails, so the repository must configure one.
 
-### text or non-text
+#### text or non-text
 
 a file counts as non-text when its first 8000 bytes contain a NUL byte.
 this is the rule git uses, so the hook and git agree.
 
-### the allowlist is `.gitattributes`
+#### the allowlist is `.gitattributes`
 
 there is no separate allowlist file. declare a non-text file in `.gitattributes`:
 
@@ -63,7 +71,7 @@ docs/report.pdf -text
 
 nested `.gitattributes` files and git precedence apply as usual, because the hook resolves attributes with `git check-attr`.
 
-## checks
+### checks
 
 the hook verifies these `.editorconfig` properties:
 
@@ -76,7 +84,7 @@ the hook verifies these `.editorconfig` properties:
 
 `indent_size` and `tab_width` are not checked, because file content cannot verify them without false positives.
 
-## usage
+### usage
 
 run the tool directly on paths:
 
@@ -90,6 +98,102 @@ exit codes:
 - `1` one or more findings
 - `2` the tool itself failed, such as a broken `.editorconfig`
 
+## lint-commit
+
+### how it works
+
+pre-commit passes the commit message file to the hook at the `commit-msg` stage.
+the hook reads the staged paths from the git index, then:
+
+- every staged path resolves to the last `[rules]` entry that matches it
+- all resolved type sets are intersected
+- an empty intersection means the changes span incompatible rules, so the commit should be split
+- the message type must lie in the intersection
+- the message scope must equal the deepest shared directory name, or be empty at the repository root
+
+a path with no matching rule fails, so every area must be declared.
+
+### configuration
+
+place `commit-config.toml` at the repository root:
+
+```toml
+[types]
+feat = "a new feature"
+fix = "a bug fix"
+docs = "documentation only"
+chore = "maintenance"
+
+[rules]
+"**" = ["chore"]
+"src/**" = ["feat", "fix", "refactor", "perf"]
+"docs/**" = ["docs"]
+```
+
+- `[types]` lists the accepted types and a short description.
+- `[rules]` maps a gitignore style pattern to the types that path may use.
+- rules are read in file order, and the last match wins.
+- a nested path is covered by the rule that matches it last, so put a catch-all first.
+
+### message shape
+
+```text
+type(scope)!: description
+
+- body entry
+- body entry
+- body entry
+- body entry
+- body entry
+
+BREAKING-CHANGE: breaking detail
+REFERENCE-LINK: https://example.com/spec
+```
+
+- the description must be 32 to 72 characters, counted after the colon and space.
+- the body is optional. when present it must be a list of 5 to 9 single line entries.
+- `BREAKING-CHANGE` may appear once and must be 32 to 128 characters.
+- only `!` or `BREAKING-CHANGE` may declare a breaking change, and both must agree.
+
+### reference footers
+
+reference marks start with `REFERENCE-`, and the value is checked with a regular expression.
+five marks are built in:
+
+- `REFERENCE-LINK` an absolute URL
+- `REFERENCE-GITHUB` `#123` or `owner/repo#123`
+- `REFERENCE-GITLAB` `#123` or `group/project#123`
+- `REFERENCE-COMMIT` a short or full commit hash
+- `REFERENCE-FILE` a repository path
+
+add or override a mark in the config:
+
+```toml
+[reference]
+"TICKET" = '^TICKET-[0-9]+$'
+```
+
+a config entry with the same name as a built in mark replaces it.
+
+### usage
+
+run the tool on a message file:
+
+```bash
+lint-commit --config commit-config.toml .git/COMMIT_EDITMSG
+```
+
+without a message file it reads `.git/COMMIT_EDITMSG`.
+`--config` defaults to `commit-config.toml` at the repository root.
+
+exit codes:
+
+- `0` the message passes
+- `1` the message is rejected, with one reason
+- `2` the tool or the config failed
+
+merge commits and `fixup!` or `squash!` commits are skipped.
+
 ## development
 
 run `make help` for all targets.
@@ -97,7 +201,7 @@ run `make help` for all targets.
 ```bash
 make install     # sync dependencies
 make all         # lint, typecheck, and test
-make self-test   # run this hook on the repository
+make self-test   # run the editor hook on the repository
 ```
 
 ## license

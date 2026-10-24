@@ -1,13 +1,16 @@
 #!/usr/bin/env bash
 # @path[scripts/release.sh]
-# release: bump the version, sync the readme, commit, tag, and push
+# ==============================================================================
+# release: prepare, commit, push, wait for ci, tag, and push the tag
 set -euo pipefail
 
 cd "$(git rev-parse --show-toplevel)"
 
 argument="${1:-patch}"
 
-if [[ "$argument" =~ ^[0-9] ]]; then
+if [[ "$argument" == "current" ]]; then
+  :
+elif [[ "$argument" =~ ^[0-9] ]]; then
   uv version "$argument"
 else
   uv version --bump "$argument"
@@ -30,7 +33,34 @@ if count != 1:
 path.write_text(text)
 PY
 
-git add -- README.md pyproject.toml uv.lock
+git add --all
+if git diff --cached --quiet; then
+  echo "no changes to commit" >&2
+  exit 1
+fi
+
 git commit -m "chore(release): $tag"
+git push origin HEAD
+
+commit="$(git rev-parse HEAD)"
+echo "waiting for ci on $commit"
+
+run_id=""
+for _ in $(seq 1 30); do
+  run_id="$(gh run list --commit "$commit" --workflow ci.yml --limit 1 \
+    --json databaseId --jq '.[0].databaseId // empty' 2>/dev/null || true)"
+  if [[ -n "$run_id" ]]; then
+    break
+  fi
+  sleep 10
+done
+
+if [[ -z "$run_id" ]]; then
+  echo "no ci run found for $commit" >&2
+  exit 1
+fi
+
+gh run watch --exit-status "$run_id"
+
 git tag -a "$tag" -m "$tag"
-git push origin HEAD --follow-tags
+git push origin "$tag"
