@@ -7,6 +7,8 @@
 
 .DEFAULT_GOAL := help
 
+MESSAGE ?= tmp/commit.tmp
+
 .PHONY: help setup install hooks lint format format-check typecheck test test-cov hook-test self-test all check release clean
 
 # Getting started
@@ -50,8 +52,10 @@ test-cov:  ## run the tests with a coverage report
 hook-test:  ## run every pre-commit hook against all files
 	uv run pre-commit run --all-files
 
-self-test:  ## check this repository with the editor hook
+self-test:  ## check the repository with both hooks
 	uv run pre-commit run lint-editor --all-files
+	@test -f $(MESSAGE) || (echo "missing $(MESSAGE), add a draft message" >&2; exit 1)
+	uv run lint-commit $(MESSAGE)
 
 # All-in-one
 # ----------
