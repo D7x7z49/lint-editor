@@ -9,6 +9,7 @@ from collections.abc import Sequence
 from pathlib import Path
 
 from .constants import (
+    CONFIG_DIRS,
     CONFIG_FILE,
     PROGRAM,
     STATUS_ERROR,
@@ -17,7 +18,7 @@ from .constants import (
     msg,
 )
 from .core import check
-from .rules import load_config
+from .rules import find_config, load_config
 from .schema import ProgramError
 
 # ==============================================================================
@@ -78,8 +79,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--config",
-        default=CONFIG_FILE,
-        help=msg("cli.config.help", path=CONFIG_FILE),
+        default=None,
+        help=msg("cli.config.help"),
     )
     parser.add_argument(
         "message_file",
@@ -115,9 +116,18 @@ def run(argv: Sequence[str]) -> int:
     if is_merge(cwd):
         return STATUS_OK
 
-    config_path = Path(args.config)
-    if not config_path.is_absolute():
-        config_path = cwd / config_path
+    if args.config is not None:
+        config_path = Path(args.config)
+        if not config_path.is_absolute():
+            config_path = cwd / config_path
+    else:
+        found = find_config(cwd)
+        if found is None:
+            candidates = ", ".join(
+                f"{part}/{CONFIG_FILE}" if part else CONFIG_FILE for part in CONFIG_DIRS
+            )
+            raise ProgramError(msg("config.file.missing", paths=candidates))
+        config_path = found
 
     config = load_config(config_path)
     paths = staged_paths(cwd)

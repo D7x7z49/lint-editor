@@ -24,7 +24,7 @@ def commit_repo(
 ) -> Callable[[Sequence[str], str], Path]:
     # prepare a repository with the config, target paths, index, and message
     def setup(paths: Sequence[str], message: str) -> Path:
-        shutil.copy(component_config, git_repo / "commit-config.toml")
+        shutil.copy(component_config, git_repo / "lint-commit.toml")
         for name in paths:
             target = git_repo / name
             target.parent.mkdir(parents=True, exist_ok=True)

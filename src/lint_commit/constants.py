@@ -8,8 +8,9 @@
 
 PROGRAM = "lint-commit"
 
-# the configuration file is looked up next to the repository root
-CONFIG_FILE = "commit-config.toml"
+# the configuration file is looked up at the root or under config/
+CONFIG_FILE = "lint-commit.toml"
+CONFIG_DIRS = ("", "config")
 
 # ==============================================================================
 # TYPES
@@ -71,9 +72,9 @@ STATUS_ERROR = 2
 # keys read as scope.object.trait, values hold square bracketed variables
 MESSAGES: dict[str, str] = {
     "cli.parser.description": "check a commit message against the configured path rules",
-    "cli.config.help": "configuration file, default [{path}]",
+    "cli.config.help": "configuration file, replaces auto discovery",
     "cli.message.help": "commit message file, default [.git/COMMIT_EDITMSG]",
-    "config.file.missing": "configuration file not found at [{path}]",
+    "config.file.missing": "no configuration file found at [{paths}]",
     "config.file.invalid": "[{path}] {reason}",
     "config.table.missing": "missing [{table}] table",
     "config.table.empty": "[{table}] must not be empty",

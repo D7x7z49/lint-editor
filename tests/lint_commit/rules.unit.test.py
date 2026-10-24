@@ -4,12 +4,20 @@ from pathlib import Path
 
 import pytest
 
-from lint_commit.rules import Matcher, load_config
+from lint_commit.rules import Matcher, find_config, load_config
 from lint_commit.schema import CommitRule, ProgramError
+
+MINIMAL = """
+[types]
+feat = "a feature"
+
+[rules]
+"**" = ["feat"]
+"""
 
 
 def write(tmp_path: Path, text: str) -> Path:
-    path = tmp_path / "commit-config.toml"
+    path = tmp_path / "lint-commit.toml"
     path.write_text(text, encoding="utf-8")
     return path
 
@@ -22,7 +30,7 @@ def test_valid_config(valid_config: Path) -> None:
 
 
 def test_missing_file(tmp_path: Path) -> None:
-    with pytest.raises(ProgramError, match="not found"):
+    with pytest.raises(ProgramError, match="no configuration file"):
         load_config(tmp_path / "absent.toml")
 
 
@@ -69,7 +77,7 @@ def test_unexpected_top_key(tmp_path: Path) -> None:
 
 
 def test_broken_toml(tmp_path: Path) -> None:
-    with pytest.raises(ProgramError, match="commit-config"):
+    with pytest.raises(ProgramError, match="lint-commit"):
         load_config(write(tmp_path, "rules = [\n"))
 
 
@@ -145,3 +153,36 @@ def test_later_rule_overrides_earlier_specific_rule() -> None:
 def test_negated_pattern_is_rejected() -> None:
     with pytest.raises(ProgramError, match="negated"):
         Matcher((CommitRule(path="!src/**", types=("feat",)),))
+
+
+def test_repository_config_loads() -> None:
+    config = load_config(Path("config/lint-commit.toml"))
+    assert "feat" in config.commit_type
+    assert any(rule.path == "src/**" for rule in config.commit_rule)
+
+
+def test_find_config_at_root(tmp_path: Path) -> None:
+    path = tmp_path / "lint-commit.toml"
+    path.write_text(MINIMAL, encoding="utf-8")
+    assert find_config(tmp_path) == path
+
+
+def test_find_config_under_config(tmp_path: Path) -> None:
+    directory = tmp_path / "config"
+    directory.mkdir()
+    path = directory / "lint-commit.toml"
+    path.write_text(MINIMAL, encoding="utf-8")
+    assert find_config(tmp_path) == path
+
+
+def test_find_config_prefers_root(tmp_path: Path) -> None:
+    root = tmp_path / "lint-commit.toml"
+    root.write_text(MINIMAL, encoding="utf-8")
+    directory = tmp_path / "config"
+    directory.mkdir()
+    (directory / "lint-commit.toml").write_text(MINIMAL, encoding="utf-8")
+    assert find_config(tmp_path) == root
+
+
+def test_find_config_missing(tmp_path: Path) -> None:
+    assert find_config(tmp_path) is None

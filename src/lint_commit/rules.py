@@ -9,7 +9,14 @@ from pathlib import Path
 from pathspec.patterns.gitignore import GitIgnorePatternError
 from pathspec.patterns.gitignore.basic import GitIgnoreBasicPattern
 
-from .constants import REFERENCE_FOOTERS, REFERENCE_PREFIX, TYPES, msg
+from .constants import (
+    CONFIG_DIRS,
+    CONFIG_FILE,
+    REFERENCE_FOOTERS,
+    REFERENCE_PREFIX,
+    TYPES,
+    msg,
+)
 from .schema import CommitConfig, CommitRule, ProgramError, ReferenceSpec
 
 # ==============================================================================
@@ -81,9 +88,18 @@ def read_reference(data: dict[str, object]) -> tuple[ReferenceSpec, ...]:
     return tuple(result)
 
 
+def find_config(root: Path) -> Path | None:
+    # return the first configuration file that exists under root
+    for part in CONFIG_DIRS:
+        candidate = root / part / CONFIG_FILE
+        if candidate.is_file():
+            return candidate
+    return None
+
+
 def load_config(path: Path) -> CommitConfig:
     if not path.is_file():
-        raise ProgramError(msg("config.file.missing", path=path))
+        raise ProgramError(msg("config.file.missing", paths=path))
 
     try:
         text = path.read_text(encoding="utf-8")

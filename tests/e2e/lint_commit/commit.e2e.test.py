@@ -12,7 +12,7 @@ def test_split_is_rejected(
     run_cli: Callable[..., subprocess.CompletedProcess[str]],
 ) -> None:
     repo = e2e_case("lint_commit/split", ("src/api/a.py", "docs/b.md"))
-    result = run_cli(repo, "lint_commit", "--config", "commit-config.toml", "msg.txt")
+    result = run_cli(repo, "lint_commit", "--config", "lint-commit.toml", "msg.txt")
 
     assert result.returncode == EXIT_REJECTED
     assert "allowed type set is empty" in result.stderr
