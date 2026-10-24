@@ -13,12 +13,13 @@ language formatters cover their own language. the rest of the repository has no 
 - a text file drifts from the conventions, and its diff stops being readable
 - a commit type is a claim, and nothing checks it against the change
 
-two hooks close the gap with contracts already in the repository:
+three hooks close the gap with contracts already in the repository:
 
 - `lint-editor` reads `.editorconfig` for text rules and `.gitattributes` for non-text admission
 - `lint-commit` reads `lint-commit.toml` for path rules and checks the message against them
+- `lint-path` reads `.pathbase` for path structure and checks the tree against it
 
-both hooks check and never edit, so the gate stays apart from formatting.
+all three hooks check and never edit, so the gate stays apart from formatting.
 
 ## install
 
@@ -32,6 +33,7 @@ repos:
     hooks:
       - id: lint-editor
       - id: lint-commit
+      - id: lint-path
 ```
 
 then install both stages:
@@ -212,6 +214,64 @@ exit codes:
 - `2` the tool or the config failed
 
 merge commits and `fixup!` or `squash!` commits are skipped.
+
+## lint-path
+
+### how it works
+
+`lint-path` reads `.pathbase` files. each file is a whitelist for the directory that holds it.
+
+```text
+# .pathbase
+/modules/
+/modules/[a-z][a-z0-9_]*/
+/modules/*/*.py
+
+# $name = module.index
+# $mode = require
+/modules/*/index.py
+```
+
+- `allow` means the path may exist and must match.
+- `require` means the path must exist and must match.
+- a projection adds one condition: the mapped path must exist in the source domain.
+- a child `.pathbase` takes over from its parent.
+- no `.pathbase` means the path is unconstrained.
+
+`@import` copies rules from another contract. `@require` only registers the namespace for a projection. `as` renames the namespace.
+
+```text
+# tests/.pathbase
+# $set_name = tests
+# @require ../src
+
+# $name = test.unit
+# $projection = @src:module.source >> s|\.test\.py$|.py|
+# $mode = require
+/modules/*/*.test.py
+```
+
+capacity keys bound a domain:
+
+```text
+# $node_max = 1000
+# $depth_max = 8
+# $degree_max = 50
+```
+
+### usage
+
+```bash
+lint-path src/core/main.py
+lint-path --audit
+lint-path --audit --domain tests/.pathbase
+```
+
+without `--audit`, at least one path is required, and each path is checked with its ancestors.
+`--audit` ignores paths and checks every domain under the root.
+`--domain FILE` uses one `.pathbase` instead of discovery.
+`--root DIR` limits the scan root.
+`--format text|json` selects the output form.
 
 ## development
 
