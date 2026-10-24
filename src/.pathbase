@@ -1,0 +1,40 @@
+# @path[src/.pathbase]
+# $set_name = src
+
+# $name        = package-dir
+# $description = one directory per package
+/lint_[a-z_]*/
+
+# $name        = package-module
+# $description = package files are Python modules
+/lint_[a-z_]*/[a-z_]*\.py
+
+# $name        = package-init
+# $description = makes the directory a package
+# $mode        = require
+/lint_[a-z_]*/__init__.py
+
+# $name        = package-main
+# $description = gives the package a module entry
+# $mode        = require
+/lint_[a-z_]*/__main__.py
+
+# $name        = package-cli
+# $description = owns argument parsing and output
+# $mode        = require
+/lint_[a-z_]*/cli.py
+
+# $name        = package-constants
+# $description = owns fixed values and messages
+# $mode        = require
+/lint_[a-z_]*/constants.py
+
+# $name        = package-core
+# $description = owns the main pipeline
+# $mode        = require
+/lint_[a-z_]*/core.py
+
+# $name        = package-schema
+# $description = owns shared types and errors
+# $mode        = require
+/lint_[a-z_]*/schema.py

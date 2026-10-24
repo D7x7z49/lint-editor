@@ -1,4 +1,4 @@
-# @path[tests/lint_editor/ignore.unit.test.py]
+# @path[tests/lint_editor/files.ignore.unit.test.py]
 
 from pathlib import Path
 

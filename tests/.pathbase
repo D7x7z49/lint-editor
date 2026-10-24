@@ -1,0 +1,79 @@
+# @path[tests/.pathbase]
+# $set_name = tests
+# @require ../src
+
+# $name        = test-root
+# $description = root test files
+/conftest.py
+/README.md
+
+# $name        = test-package
+# $description = one test package per source package
+# $projection  = @src:package-dir
+/lint_[a-z_]*/
+
+# $name        = test-conftest
+# $description = package level test setup
+/lint_[a-z_]*/conftest.py
+
+# $name        = test-module
+# $description = test file per source module
+# $projection  = @src:package-module >> s|(\.[a-z]+)+\.test\.py$|.py|
+/lint_[a-z_]*/[a-z_.]*\.(unit|component|integration)\.test\.py
+
+# $name        = test-e2e
+# $description = e2e test layer
+/e2e/
+/e2e/conftest.py
+
+# $name        = test-e2e-package
+# $description = one e2e package per tested package
+# $projection  = @src:package-dir >> s|^/e2e||
+/e2e/lint_[a-z_]*/
+
+# $name        = test-e2e-module
+# $description = e2e file ends with .e2e.test.py
+/e2e/lint_[a-z_]*/[a-z_]*\.e2e\.test\.py
+
+# $name        = data-dir
+# $description = test input layer
+/data/
+
+# $name        = data-package
+# $description = data package mirrors a test package
+# $projection  = @test-package >> s|^/data||
+/data/lint_[a-z_]*/
+
+# non e2e data follows <package>/<subject>/<case>
+
+# $name        = data-subject
+# $description = one data subject per tested area
+/data/lint_[a-z_]*/*/
+
+# $name        = data-case
+# $description = one case under a subject
+/data/lint_[a-z_]*/*/*/
+
+# $name        = data-file
+# $description = a case holds only input and output files
+/data/lint_[a-z_]*/*/*/stdin.txt
+/data/lint_[a-z_]*/*/*/stdout.txt
+/data/lint_[a-z_]*/*/*/stderr.txt
+
+# $name        = data-e2e
+# $description = e2e data layer
+# $projection  = @test-e2e >> s|^/data||
+/data/e2e/
+
+# $name        = data-e2e-package
+# $description = e2e data package mirrors an e2e package
+# $projection  = @test-e2e-package >> s|^/data||
+/data/e2e/lint_[a-z_]*/
+
+# $name        = data-e2e-tree
+# $description = e2e case directories are free form
+/data/e2e/lint_[a-z_]*/**/
+
+# $name        = data-e2e-file
+# $description = e2e case files are free form
+/data/e2e/lint_[a-z_]*/**
