@@ -32,6 +32,7 @@ classifiers = [
 [project.scripts]
 lint-editor = "lint_editor.cli:main"
 lint-commit = "lint_commit.cli:main"
+lint-path = "lint_path.cli:main"
 
 [project.urls]
 homepage = "https://github.com/D7x7z49/lint-editor"
@@ -51,5 +52,5 @@ requires = ["uv_build>=0.10.11,<0.11.0"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = ["lint_editor", "lint_commit"]
+module-name = ["lint_editor", "lint_commit", "lint_path"]
 module-root = "src"

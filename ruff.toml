@@ -72,6 +72,8 @@ max-complexity = 10
 [lint.per-file-ignores]
 "src/lint_editor/cli.py" = ["T20"] # the command line writes to stdout
 "src/lint_commit/cli.py" = ["T20", "S603", "S607"] # the command line writes to stderr and runs git
+"src/lint_path/cli.py" = ["T20"] # the command line writes to stdout
+"src/lint_path/core.py" = ["S603", "S607"] # the core runs git to read the ignore rules
 "tests/**" = ["INP001", "S101", "S603", "S607"] # tests skip packages, assert freely, and run tools
 
 [format]
