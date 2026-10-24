@@ -1,4 +1,4 @@
-# @path[tests/lint_commit/cli.component.test.py]
+# @path[tests/lint_commit/cli.integration.test.py]
 
 import sys
 from collections.abc import Callable, Sequence
