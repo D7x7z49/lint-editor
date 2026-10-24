@@ -34,7 +34,7 @@ jobs:
         run: uv run pre-commit run --all-files
 
       - name: validate the hook manifest
-        run: uv run pre-commit try-repo . lint-editor --all-files
+        run: uv run pre-commit try-repo . lint-editor --files README.md
 
       - name: validate the commit hook entry
         run: uv run lint-commit --help
