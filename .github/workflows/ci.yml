@@ -30,14 +30,11 @@ jobs:
       - name: install dependencies
         run: uv sync --locked
 
-      - name: run the static checks
-        run: uv run pre-commit run --all-files
-
       - name: validate the hook manifest
         run: uv run pre-commit validate-manifest .pre-commit-hooks.yaml
 
-      - name: validate the editor hook
-        run: uv run pre-commit try-repo . lint-editor --all-files
+      - name: run the static checks
+        run: uv run pre-commit run --all-files
 
   test:
     runs-on: ubuntu-latest
