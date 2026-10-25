@@ -280,7 +280,8 @@ run `make help` for all targets.
 ```bash
 make install     # sync dependencies
 make all         # lint, typecheck, and test
-make self-test   # run the editor hook on the repository
+make self-test   # run the three tools on the repository
+make audit       # audit the whole path tree
 ```
 
 ## license
