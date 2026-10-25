@@ -85,7 +85,7 @@ if git diff --cached --quiet; then
   exit 1
 fi
 
-git commit -m "chore(release): $tag"
+git commit -m "chore: release $tag and update the readme revision"
 
 # ==============================================================================
 # PUSH AND CI
