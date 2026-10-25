@@ -30,6 +30,7 @@ revert = "revert earlier commit"
 # documentation
 "docs/**" = ["docs"]
 "*.md" = ["docs"]
+"README.md" = ["docs", "chore"]
 "AGENTS.md" = ["docs", "chore"]
 
 # root configuration
