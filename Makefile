@@ -9,7 +9,7 @@
 
 MESSAGE ?= tmp/commit.tmp
 
-.PHONY: help setup install dev hooks lint format format-check typecheck test test-cov hook-test self-test all check release clean
+.PHONY: help setup install dev hooks lint format format-check typecheck test test-cov hook-test self-test audit all check release clean
 
 # Getting started
 # ---------------
@@ -49,23 +49,27 @@ test:  ## run the test suite
 	uv run pytest
 
 test-cov:  ## run the tests with a coverage report
-	uv run pytest --cov=lint_editor --cov=lint_commit --cov-report=term-missing
+	uv run pytest --cov=lint_editor --cov=lint_commit --cov=lint_path --cov-report=term-missing
 
 # Integration
 # -----------
 hook-test:  ## run every pre-commit hook against all files
 	uv run pre-commit run --all-files
 
-self-test:  ## check the repository with both hooks
+self-test:  ## check the repository with the three tools
 	uv run pre-commit run lint-editor --all-files
 	@test -f $(MESSAGE) || (echo "missing $(MESSAGE), add a draft message" >&2; exit 1)
 	uv run lint-commit $(MESSAGE)
+	uv run lint-path --audit
+
+audit:  ## audit the whole path tree against .pathbase contracts
+	uv run lint-path --audit
 
 # All-in-one
 # ----------
 all: lint format-check typecheck test  ## run lint, format check, typecheck, and tests
 
-check: hook-test  ## run the full pre-commit gate
+check: hook-test audit  ## run the full pre-commit gate and path audit
 
 # Release
 # -------
